@@ -6,11 +6,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * @author huisheng.jin
@@ -39,4 +39,16 @@ public class EncryptControllerTest {
                 .andExpect(content().contentTypeCompatibleWith("text/html"));
     }
 
+    @Test
+    void should_resolve_model_with_attribute_given_message_and_picture() throws Exception {
+        InputStream resource = getClass().getClassLoader().getResourceAsStream("banner.png");
+        MockMultipartFile picture = new MockMultipartFile("picture", resource);
+
+        mvc.perform(multipart("/encrypt")
+                .file(picture)
+                .param("message", "Hello!"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("imageAsBase64"));
+//                .andExpect(model().attribute("imageAsBase64", FIXME));
+    }
 }
