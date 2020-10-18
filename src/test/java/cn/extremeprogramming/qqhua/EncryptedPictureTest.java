@@ -13,23 +13,30 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
  * @date 2020/10/18.
  */
 public class EncryptedPictureTest {
+
+    private static final String MESSAGE = "hello";
+
     @Test
     void should_create_encryptedPicture_success_given_message_and_picture() throws IOException {
-        byte[] bytes = getClass().getClassLoader().getResourceAsStream("banner.png").readAllBytes();
-        EncryptedPicture encryptedPicture = new EncryptedPicture("hello", bytes);
-        assertThat(encryptedPicture.getMessage()).isEqualTo("hello");
+        byte[] bytes = loadTestPicture("banner.png");
+        EncryptedPicture encryptedPicture = new EncryptedPicture(MESSAGE, bytes);
+        assertThat(encryptedPicture.getMessage()).isEqualTo(MESSAGE);
         assertThat(encryptedPicture.getPicture()).isEqualTo(bytes);
     }
 
     @Test
     void should_toBase64_success() throws IOException {
-        byte[] bytes = getClass().getClassLoader().getResourceAsStream("banner.png").readAllBytes();
-        EncryptedPicture encryptedPicture = new EncryptedPicture("hello", bytes);
+        byte[] bytes = loadTestPicture("banner.png");
+        EncryptedPicture encryptedPicture = new EncryptedPicture(MESSAGE, bytes);
 
-        byte[] encodedImageData = encode("src/test/resources/banner.png", "hello");
+        byte[] encodedImageData = encode("src/test/resources/banner.png", MESSAGE);
         String expected = getMimeEncoder().encodeToString(encodedImageData);
 
         assertThat(encryptedPicture.toBase64()).isEqualTo(expected);
+    }
+
+    private byte[] loadTestPicture(String picture) throws IOException {
+        return getClass().getClassLoader().getResourceAsStream(picture).readAllBytes();
     }
 
 }
