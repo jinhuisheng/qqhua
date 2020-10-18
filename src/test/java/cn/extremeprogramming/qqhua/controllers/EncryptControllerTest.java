@@ -7,9 +7,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.io.IOException;
 import java.io.InputStream;
 
+import static cn.extremeprogramming.qqhua.TestHelper.loadTestPicture;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -45,18 +45,14 @@ public class EncryptControllerTest {
         InputStream resource = getClass().getClassLoader().getResourceAsStream("banner.png");
         MockMultipartFile picture = new MockMultipartFile("picture", resource);
 
-        EncryptedPicture encryptedPicture = new EncryptedPicture("Hello!", loadTestPicture("banner.png"));
+        EncryptedPicture expected = new EncryptedPicture("Hello!", loadTestPicture("banner.png"));
 
         mvc.perform(multipart("/encrypt")
                 .file(picture)
                 .param("message", "Hello!"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("imageAsBase64"))
-                .andExpect(model().attribute("imageAsBase64", encryptedPicture.toBase64()));
-    }
-
-    private byte[] loadTestPicture(String picture) throws IOException {
-        return getClass().getClassLoader().getResourceAsStream(picture).readAllBytes();
+                .andExpect(model().attribute("imageAsBase64", expected.toBase64()));
     }
 
 }

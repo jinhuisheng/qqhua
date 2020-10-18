@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
+import static cn.extremeprogramming.qqhua.TestHelper.*;
 import static deaddrop.Basic.encode;
 import static java.util.Base64.getMimeEncoder;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
@@ -33,10 +34,6 @@ public class EncryptedPictureTest {
         String expected = getMimeEncoder().encodeToString(encodedImageData);
 
         assertThat(encryptedPicture.toBase64()).isEqualTo(expected);
-    }
-
-    private byte[] loadTestPicture(String picture) throws IOException {
-        return getClass().getClassLoader().getResourceAsStream(picture).readAllBytes();
     }
 
 }
