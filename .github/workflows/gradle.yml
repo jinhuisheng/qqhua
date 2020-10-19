@@ -1,0 +1,58 @@
+name: Docker Build And Push To Aliyun Hub
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    name: Build Spring Boot
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git Checkout Code
+        uses: actions/checkout@v1
+        id: git_checkout
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      - name: Build with Gradle
+        run: ./gradlew build
+
+      - name: Build Docker Image
+        id: buildAndPushImage
+        uses: risfeng/docker-image-build-push-action@v1.0
+        with:
+          registry_url: 'registry.cn-qingdao.aliyuncs.com'
+          namespaces: 'jinge7166'
+          repository_name: 'qqhua'
+          user_name: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          image_version: 'master.latest'
+          docker_file: '.'
+      - name: Get pre step result output image_pull_url
+        run: echo "The time was ${{ steps.buildAndPushImage.outputs.image_pull_url }}"
+
+  pull-docker:
+    needs: [build]
+    name: Pull Docker
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          password: ${{ secrets.PWD }}
+          port: ${{ secrets.PORT }}
+          script: |
+            docker stop $(docker ps --filter ancestor=${{ secrets.REGISTRY }} -q)
+            docker rm -f $(docker ps -a --filter ancestor=${{ secrets.REGISTRY }}:latest -q)
+            docker rmi -f $(docker images  ${{ secrets.REGISTRY }}:latest -q)
+            docker login --username=${{ secrets.USERNAME }} --password ${{ secrets.PASSWORD }} registry.cn-shanghai.aliyuncs.com
+            docker pull ${{ secrets.REGISTRY }}:latest
+            docker run -d -p 8138:8080 ${{ secrets.REGISTRY }}:latest
+# 上面暴露出了 8060端口, 填你项目端口即可 (没有端口可忽略)
