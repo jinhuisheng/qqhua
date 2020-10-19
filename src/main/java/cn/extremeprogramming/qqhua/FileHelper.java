@@ -9,7 +9,7 @@ import java.io.IOException;
  * @author huisheng.jin
  */
 public class FileHelper {
-    static String writePictureToTempFile(byte[] picture) throws IOException {
+    public static String writePictureToTempFile(byte[] picture) throws IOException {
         String originalFilePath = String.format("/tmp/%s.png", new DateTime());
         new FileOutputStream(originalFilePath).write(picture);
         return originalFilePath;
