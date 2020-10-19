@@ -24,14 +24,9 @@ public class DecryptedPicture {
     }
 
     public String message() throws IOException {
-        String tempFile = writePictureToTempFile();
+        String tempFile = FileHelper.writePictureToTempFile(picture);
         Basic basic = new Basic(tempFile);
         return new String(basic.decode_data());
     }
 
-    private String writePictureToTempFile() throws IOException {
-        String originalFilePath = format("/tmp/%s.png", new DateTime());
-        new FileOutputStream(originalFilePath).write(picture);
-        return originalFilePath;
-    }
 }

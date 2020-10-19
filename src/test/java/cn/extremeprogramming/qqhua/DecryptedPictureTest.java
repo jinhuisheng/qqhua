@@ -1,16 +1,13 @@
 package cn.extremeprogramming.qqhua;
 
 import deaddrop.Basic;
-import org.joda.time.DateTime;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 import static cn.extremeprogramming.qqhua.TestHelper.loadTestPicture;
 import static deaddrop.Basic.encode;
-import static java.lang.String.format;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 /**
@@ -18,6 +15,9 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
  * @date 2020/10/19.
  */
 public class DecryptedPictureTest {
+
+    private static final String TO_BE_DECRYPTED_MESSAGE = "hello";
+
     @Test
     void should_create_decryptedPicture_success() throws IOException {
         byte[] bytes = loadTestPicture("banner.png");
@@ -27,8 +27,7 @@ public class DecryptedPictureTest {
 
     @Test
     void should_get_message_success() throws IOException {
-        byte[] encodedImageData = encode("src/test/resources/banner.png", "hello");
-        String tempFile = writePictureToTempFile(encodedImageData);
+        String tempFile = givenEncryptedPictureFile("src/test/resources/banner.png", TO_BE_DECRYPTED_MESSAGE);
         Basic basic = new Basic(tempFile);
         String expected = new String(basic.decode_data());
 
@@ -37,10 +36,9 @@ public class DecryptedPictureTest {
         assertThat(decryptedPicture.message()).isEqualTo(expected);
     }
 
-    private String writePictureToTempFile(byte[] picture) throws IOException {
-        String originalFilePath = format("/tmp/%s.png", new DateTime());
-        new FileOutputStream(originalFilePath).write(picture);
-        return originalFilePath;
+    private String givenEncryptedPictureFile(String imageFilePath, String message) throws IOException {
+        byte[] encodedImageData = encode(imageFilePath, message);
+        return FileHelper.writePictureToTempFile(encodedImageData);
     }
 
 }
