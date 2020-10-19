@@ -1,6 +1,7 @@
 package cn.extremeprogramming.qqhua.controllers;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,7 +13,8 @@ import org.springframework.web.multipart.MultipartFile;
 @Controller
 public class DecryptController {
     @RequestMapping("/decrypt")
-    public String post(@RequestParam("picture") MultipartFile picture) {
+    public String post(@RequestParam("picture") MultipartFile picture, Model model) {
+        model.addAttribute("message", "test");
         return "decrypted.html";
     }
 }

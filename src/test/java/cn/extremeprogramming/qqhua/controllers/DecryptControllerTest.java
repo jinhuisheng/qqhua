@@ -9,8 +9,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.io.InputStream;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * @author huisheng.jin
@@ -36,4 +35,16 @@ public class DecryptControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("decrypted.html"));
     }
+
+    @Test
+    void should_resolve_model_attribute_success() throws Exception {
+        InputStream resource = getClass().getClassLoader().getResourceAsStream("banner.png");
+        MockMultipartFile picture = new MockMultipartFile("picture", resource);
+        mvc.perform(multipart("/decrypt")
+                .file(picture))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("message"));
+//                .andExpect(model().attribute("message", "xxxx"));
+    }
+
 }
