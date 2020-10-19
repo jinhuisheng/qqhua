@@ -3,11 +3,9 @@ package cn.extremeprogramming.qqhua;
 import deaddrop.Basic;
 import org.junit.jupiter.api.Test;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 
 import static cn.extremeprogramming.qqhua.TestHelper.loadTestPicture;
-import static deaddrop.Basic.encode;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 /**
@@ -27,18 +25,13 @@ public class DecryptedPictureTest {
 
     @Test
     void should_get_message_success() throws IOException {
-        String tempFile = givenEncryptedPictureFile("src/test/resources/banner.png", TO_BE_DECRYPTED_MESSAGE);
+        String tempFile = TestHelper.givenEncryptedPictureFile("src/test/resources/banner.png"
+                , TO_BE_DECRYPTED_MESSAGE);
         Basic basic = new Basic(tempFile);
         String expected = new String(basic.decode_data());
 
-        byte[] picture = new FileInputStream(tempFile).readAllBytes();
-        DecryptedPicture decryptedPicture = new DecryptedPicture(picture);
+        DecryptedPicture decryptedPicture = new DecryptedPicture(TestHelper.getBytes(tempFile));
         assertThat(decryptedPicture.message()).isEqualTo(expected);
-    }
-
-    private String givenEncryptedPictureFile(String imageFilePath, String message) throws IOException {
-        byte[] encodedImageData = encode(imageFilePath, message);
-        return FileHelper.writePictureToTempFile(encodedImageData);
     }
 
 }

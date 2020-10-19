@@ -1,18 +1,16 @@
 package cn.extremeprogramming.qqhua.controllers;
 
-import cn.extremeprogramming.qqhua.FileHelper;
+import cn.extremeprogramming.qqhua.TestHelper;
 import deaddrop.Basic;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
-import static deaddrop.Basic.encode;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -24,9 +22,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class DecryptControllerTest {
 
     private static final String TO_BE_DECRYPTED_MESSAGE = "hello";
+    public static final String MODEL_ATTRIBUTE_MESSAGE = "message";
 
     @Autowired
     MockMvc mvc;
+    private String encryptedPictureFile;
+    private MockMultipartFile picture;
+
+    @BeforeEach
+    void setUp() throws IOException {
+        encryptedPictureFile = TestHelper.givenEncryptedPictureFile("src/test/resources/banner.png"
+                , TO_BE_DECRYPTED_MESSAGE);
+        picture = new MockMultipartFile("picture", TestHelper.getBytes(encryptedPictureFile));
+    }
 
     @Test
     void should_throw_error_400_without_given_decrypted_picture() throws Exception {
@@ -36,8 +44,6 @@ public class DecryptControllerTest {
 
     @Test
     void should_handle_post_and_return_view() throws Exception {
-        String encryptedPictureFile = givenEncryptedPictureFile("src/test/resources/banner.png", TO_BE_DECRYPTED_MESSAGE);
-        MockMultipartFile picture = new MockMultipartFile("picture", new FileInputStream(encryptedPictureFile).readAllBytes());
         mvc.perform(multipart("/decrypt")
                 .file(picture))
                 .andExpect(status().isOk())
@@ -46,20 +52,17 @@ public class DecryptControllerTest {
 
     @Test
     void should_resolve_model_attribute_success() throws Exception {
-        String encryptedPictureFile = givenEncryptedPictureFile("src/test/resources/banner.png", TO_BE_DECRYPTED_MESSAGE);
-        Basic basic = new Basic(encryptedPictureFile);
-        String expected = new String(basic.decode_data());
-
-        MockMultipartFile picture = new MockMultipartFile("picture", new FileInputStream(encryptedPictureFile).readAllBytes());
+        String expected = givenExpected(encryptedPictureFile);
         mvc.perform(multipart("/decrypt")
                 .file(picture))
                 .andExpect(status().isOk())
-                .andExpect(model().attributeExists("message"))
-                .andExpect(model().attribute("message", expected));
+                .andExpect(model().attributeExists(MODEL_ATTRIBUTE_MESSAGE))
+                .andExpect(model().attribute(MODEL_ATTRIBUTE_MESSAGE, expected));
     }
 
-    private String givenEncryptedPictureFile(String imageFilePath, String message) throws IOException {
-        byte[] encodedImageData = encode(imageFilePath, message);
-        return FileHelper.writePictureToTempFile(encodedImageData);
+    private String givenExpected(String encryptedPictureFile) {
+        Basic basic = new Basic(encryptedPictureFile);
+        return new String(basic.decode_data());
     }
+
 }
