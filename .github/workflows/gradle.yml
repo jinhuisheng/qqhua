@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    name: Build Spring Boot
+    name: Build And Push Docker
     runs-on: ubuntu-latest
     steps:
       - name: Git Checkout Code
@@ -36,6 +36,11 @@ jobs:
       - name: Get pre step result output image_pull_url
         run: echo "The time was ${{ steps.buildAndPushImage.outputs.image_pull_url }}"
 
+  deploy:
+    needs: [build]
+    name: Deploy to Aliyun
+    runs-on: ubuntu-latest
+    steps:
       - name: Deploy
         uses: appleboy/ssh-action@master
         with:
