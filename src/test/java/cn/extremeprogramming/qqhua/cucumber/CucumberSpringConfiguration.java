@@ -1,4 +1,4 @@
-package cn.extremeprogramming.qqhua.functional;
+package cn.extremeprogramming.qqhua.cucumber;
 
 import cn.extremeprogramming.qqhua.QqhuaApplication;
 import io.cucumber.spring.CucumberContextConfiguration;

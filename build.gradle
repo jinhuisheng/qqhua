@@ -14,7 +14,6 @@ repositories {
 
 dependencies {
     compile 'joda-time:joda-time:2.10.6'
-    testCompile group: 'io.rest-assured', name: 'rest-assured'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
@@ -22,7 +21,6 @@ dependencies {
     testImplementation 'io.cucumber:cucumber-java8:6.8.1'
     testImplementation 'io.cucumber:cucumber-junit:6.8.1'
     testImplementation 'io.cucumber:cucumber-spring:6.8.1'
-//    testImplementation group: 'junit', name: 'junit', version: '4.12'
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
@@ -49,7 +47,7 @@ task cucumber() {
             args = ['--plugin',
                     'pretty',
                     '--glue',
-                    'cn.extremeprogramming.qqhua.functional',
+                    'cn.extremeprogramming.qqhua.cucumber',
                     'src/test/resources/features']
         }
     }

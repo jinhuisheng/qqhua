@@ -1,11 +1,14 @@
-package cn.extremeprogramming.qqhua.driver;
+package cn.extremeprogramming.qqhua.cucumber.driver;
 
+import cn.extremeprogramming.qqhua.TestHelper;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
@@ -27,6 +30,12 @@ public class Driver {
     public void navigateTo(String url) {
         webDriver.get(urlWithHostAndPort(url));
         webDriver.switchTo().window(webDriver.getWindowHandle());
+    }
+
+    public void submitMessageAndImageFile(String message, String absolutePath) {
+        webDriver.findElement(By.id("inputMessage")).sendKeys(message);
+        webDriver.findElement(By.id("encryptImage")).sendKeys(absolutePath);
+        webDriver.findElement(By.id("encryptButton")).click();
     }
 
     public void waitForTextPresent(String text) {
@@ -78,14 +87,35 @@ public class Driver {
     }
 
     public String getAllTextInPage() {
-        return elementByTag().getText();
+        return webDriver.findElement(By.tagName("body")).getText();
     }
 
-    private WebElement elementByTag() {
-        return webDriver.findElement(By.tagName("body"));
+    public Boolean containsImg() {
+        return webDriver.findElement(By.tagName("img")).isDisplayed();
     }
 
     private String urlWithHostAndPort(String url) {
         return HOST_NAME_PREFIX + port + contextPath + url;
+    }
+
+    public void uploadEncryptedImage() throws IOException {
+        String path = TestHelper.givenEncryptedPictureFile("src/test/resources/banner.png"
+                , "Hello");
+        File file = new File(path);
+        webDriver.findElement(By.id("encodedImage")).sendKeys(file.getAbsolutePath());
+        webDriver.findElement(By.id("decryptButton")).click();
+    }
+
+    public String returnMessage() {
+        return webDriver.findElement(By.className("card-text")).getText();
+    }
+
+    public void submitEncodedImageFile(String absolutePath) {
+        webDriver.findElement(By.id("encodedImage")).sendKeys(absolutePath);
+        webDriver.findElement(By.id("decryptButton")).click();
+    }
+
+    public String getDecryptedMessage(String message) {
+        return webDriver.findElement(By.className("card-text")).getText();
     }
 }
