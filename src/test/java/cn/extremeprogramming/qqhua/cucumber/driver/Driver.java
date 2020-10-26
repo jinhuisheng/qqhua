@@ -1,22 +1,14 @@
 package cn.extremeprogramming.qqhua.cucumber.driver;
 
-import cn.extremeprogramming.qqhua.TestHelper;
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Value;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Stream;
 
 public class Driver {
 
     private static final String HOST_NAME_PREFIX = "http://localhost:";
-    private static final int DEFAULT_TIME_OUT_IN_SECONDS = 10;
     private final WebDriver webDriver = new ChromeDriver();
     @Value("${cucumber.port}")
     private String port;
@@ -32,90 +24,32 @@ public class Driver {
         webDriver.switchTo().window(webDriver.getWindowHandle());
     }
 
-    public void submitMessageAndImageFile(String message, String absolutePath) {
-        webDriver.findElement(By.id("inputMessage")).sendKeys(message);
-        webDriver.findElement(By.id("encryptImage")).sendKeys(absolutePath);
-        webDriver.findElement(By.id("encryptButton")).click();
+    public void inputFileById(String path, String id) {
+        elementById(id).sendKeys(path);
     }
 
-    public void waitForTextPresent(String text) {
-        try {
-            new WebDriverWait(webDriver, DEFAULT_TIME_OUT_IN_SECONDS).until(
-                    (ExpectedCondition<Boolean>) webDriver -> getAllTextInPage().contains(text));
-        } catch (TimeoutException e) {
-            throw new TimeoutException(textNotFoundMessage(text));
-        }
+    public void inputTextById(String text, String id) {
+        elementById(id).sendKeys(text);
     }
 
-    private String textNotFoundMessage(String text) {
-        return String.format("Timed out after %d seconds waiting for \"%s\"", DEFAULT_TIME_OUT_IN_SECONDS, text);
+    public void clickById(String id) {
+        elementById(id).click();
     }
 
-    public void inputTextByName(String text, String name) {
-        elementByName(name).sendKeys(text);
+    public String waitForTextPresentByCssClassName(String className) {
+        return webDriver.findElement(By.className(className)).getText();
     }
 
-    private WebElement elementByName(String name) {
-        return webDriver.findElement(By.name(name));
+    public Boolean existElementByTagName(String tagName) {
+        return webDriver.findElement(By.tagName(tagName)).isDisplayed();
     }
 
-    public void clickByText(String text) {
-        firstElementByText(text).click();
-    }
-
-    private WebElement firstElementByText(String text) {
-        return elementsByText(text)
-                .findFirst().<NoSuchElementException>orElseThrow(() -> {
-                    throw new NoSuchElementException(String.format("no element can be found by text: %s", text));
-                });
-    }
-
-    private Stream<WebElement> elementsByText(String text) {
-        return Stream.of(
-                elementsByXPath(String.format("//input[@value='%s']", text)),
-                elementsByXPath(String.format("//button[text()='%s']", text)),
-                elementsByLinkText(text))
-                .flatMap(Collection::stream);
-    }
-
-    private List<WebElement> elementsByLinkText(String text) {
-        return webDriver.findElements(By.linkText(text));
-    }
-
-    private List<WebElement> elementsByXPath(String xpath) {
-        return webDriver.findElements(By.xpath(xpath));
-    }
-
-    public String getAllTextInPage() {
-        return webDriver.findElement(By.tagName("body")).getText();
-    }
-
-    public Boolean containsImg() {
-        return webDriver.findElement(By.tagName("img")).isDisplayed();
+    private WebElement elementById(String id) {
+        return webDriver.findElement(By.id(id));
     }
 
     private String urlWithHostAndPort(String url) {
         return HOST_NAME_PREFIX + port + contextPath + url;
     }
 
-    public void uploadEncryptedImage() throws IOException {
-        String path = TestHelper.givenEncryptedPictureFile("src/test/resources/banner.png"
-                , "Hello");
-        File file = new File(path);
-        webDriver.findElement(By.id("encodedImage")).sendKeys(file.getAbsolutePath());
-        webDriver.findElement(By.id("decryptButton")).click();
-    }
-
-    public String returnMessage() {
-        return webDriver.findElement(By.className("card-text")).getText();
-    }
-
-    public void submitEncodedImageFile(String absolutePath) {
-        webDriver.findElement(By.id("encodedImage")).sendKeys(absolutePath);
-        webDriver.findElement(By.id("decryptButton")).click();
-    }
-
-    public String getDecryptedMessage(String message) {
-        return webDriver.findElement(By.className("card-text")).getText();
-    }
 }

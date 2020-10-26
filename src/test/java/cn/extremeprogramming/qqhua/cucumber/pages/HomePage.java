@@ -5,7 +5,6 @@ import cn.extremeprogramming.qqhua.cucumber.driver.Driver;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
-import java.io.IOException;
 
 public class HomePage {
 
@@ -22,24 +21,22 @@ public class HomePage {
 
     public void submitMessageAndImageFile(String message, String imagePath) {
         File file = TestHelper.givenFile(imagePath);
-        driver.submitMessageAndImageFile(message, file.getAbsolutePath());
+        driver.inputTextById(message, "inputMessage");
+        driver.inputFileById(file.getAbsolutePath(), "encryptImage");
+        driver.clickById("encryptButton");
     }
 
-    public Boolean containsImg() {
-        return driver.containsImg();
+    public Boolean existEncodedImage() {
+        return driver.existElementByTagName("img");
     }
 
-
-    public void uploadEncryptedImage() throws IOException {
-        driver.uploadEncryptedImage();
-    }
-
-    public String getDecryptedMessage(String message) {
-        return driver.getDecryptedMessage(message);
+    public String getDecryptedMessage() {
+        return driver.waitForTextPresentByCssClassName("card-text");
     }
 
     public void submitImageFile(String imagePath) {
         File file = TestHelper.givenFile(imagePath);
-        driver.submitEncodedImageFile(file.getAbsolutePath());
+        driver.inputFileById(file.getAbsolutePath(), "encodedImage");
+        driver.clickById("decryptButton");
     }
 }

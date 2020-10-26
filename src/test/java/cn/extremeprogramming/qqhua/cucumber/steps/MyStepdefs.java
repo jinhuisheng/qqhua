@@ -21,7 +21,7 @@ public class MyStepdefs implements En {
         Then("user see two forms with one encrypt and one decrypt form", this::openHomePage);
 
         Then("user sees encoded picture", () -> {
-            assertThat(homePage.containsImg()).isTrue();
+            assertThat(homePage.existEncodedImage()).isTrue();
         });
 
         When("user uploads encoded picture {string}", (String encodedImagePath) -> {
@@ -29,8 +29,7 @@ public class MyStepdefs implements En {
         });
 
         Then("user sees decoded message {string}", (String expectedMessage) -> {
-            String decryptedMessage = homePage.getDecryptedMessage(expectedMessage);
-            assertThat(decryptedMessage).isEqualTo(expectedMessage);
+            assertThat(homePage.getDecryptedMessage()).isEqualTo(expectedMessage);
         });
 
         When("user uploads picture with message {string} and file {string}", (String message, String imagePath) -> {
