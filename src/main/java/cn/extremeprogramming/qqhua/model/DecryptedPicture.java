@@ -1,5 +1,6 @@
-package cn.extremeprogramming.qqhua;
+package cn.extremeprogramming.qqhua.model;
 
+import cn.extremeprogramming.qqhua.FileHelper;
 import deaddrop.Basic;
 import org.joda.time.DateTime;
 

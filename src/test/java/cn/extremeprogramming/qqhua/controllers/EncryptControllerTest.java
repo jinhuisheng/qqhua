@@ -1,6 +1,6 @@
 package cn.extremeprogramming.qqhua.controllers;
 
-import cn.extremeprogramming.qqhua.EncryptedPicture;
+import cn.extremeprogramming.qqhua.model.EncryptedPicture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,5 +1,7 @@
-package cn.extremeprogramming.qqhua;
+package cn.extremeprogramming.qqhua.model;
 
+import cn.extremeprogramming.qqhua.TestHelper;
+import cn.extremeprogramming.qqhua.model.DecryptedPicture;
 import deaddrop.Basic;
 import org.junit.jupiter.api.Test;
 

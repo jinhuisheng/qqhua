@@ -1,10 +1,10 @@
-package cn.extremeprogramming.qqhua;
+package cn.extremeprogramming.qqhua.model;
 
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static cn.extremeprogramming.qqhua.TestHelper.*;
+import static cn.extremeprogramming.qqhua.TestHelper.loadTestPicture;
 import static deaddrop.Basic.encode;
 import static java.util.Base64.getMimeEncoder;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;

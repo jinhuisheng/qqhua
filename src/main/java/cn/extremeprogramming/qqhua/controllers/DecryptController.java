@@ -1,6 +1,6 @@
 package cn.extremeprogramming.qqhua.controllers;
 
-import cn.extremeprogramming.qqhua.DecryptedPicture;
+import cn.extremeprogramming.qqhua.model.DecryptedPicture;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
